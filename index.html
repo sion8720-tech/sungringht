@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eef1e8">
+  <title>Mori · iPhone 미리보기</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d2925;
+      --muted: #78827b;
+      --line: #dce2d8;
+      --paper: #f7f8f3;
+      --green: #587d69;
+      --yellow: #f8df58;
+      --font: "DM Sans", "Noto Sans KR", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: var(--font);
+      background-color: #edf1e8;
+      background-image: radial-gradient(#bdc9b8 0.65px, transparent 0.65px);
+      background-size: 15px 15px;
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+    .workspace { min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar {
+      height: 72px;
+      padding: 0 clamp(20px, 5vw, 72px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(29, 41, 37, .1);
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-size: 15px; font-weight: 700; letter-spacing: .02em; }
+    .brand-mark { width: 25px; height: 25px; display: grid; place-items: center; border-radius: 8px; background: var(--green); color: white; font-size: 14px; }
+    .top-meta { display: flex; align-items: center; gap: 18px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .11em; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #68a47b; box-shadow: 0 0 0 3px rgba(104,164,123,.15); }
+
+    .stage {
+      width: min(1120px, calc(100% - 48px));
+      margin: auto;
+      padding: 35px 0 42px;
+      display: grid;
+      grid-template-columns: minmax(210px, 1fr) 400px minmax(210px, 1fr);
+      align-items: center;
+      gap: clamp(24px, 5vw, 70px);
+    }
+    .screen-picker { align-self: center; }
+    .eyebrow { margin: 0 0 12px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .16em; }
+    h1 { margin: 0 0 28px; font-size: 28px; line-height: 1.25; letter-spacing: -.04em; font-weight: 600; }
+    .screen-tabs { display: grid; gap: 8px; }
+    .screen-tab {
+      border: 1px solid transparent;
+      border-radius: 12px;
+      padding: 14px 15px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      text-align: left;
+      background: transparent;
+      cursor: pointer;
+      transition: background .2s, border-color .2s, transform .2s;
+    }
+    .screen-tab:hover { transform: translateX(3px); background: rgba(255,255,255,.55); }
+    .screen-tab[aria-selected="true"] { background: var(--paper); border-color: var(--line); box-shadow: 0 5px 16px rgba(49, 65, 53, .05); }
+    .tab-number { color: #89938b; font-size: 10px; font-weight: 700; letter-spacing: .08em; }
+    .tab-label { flex: 1; font-size: 13px; font-weight: 600; }
+    .tab-arrow { color: #9aa39b; font-size: 16px; }
+
+    .device-column { display: flex; justify-content: center; }
+    .phone {
+      position: relative;
+      width: min(100%, 390px);
+      aspect-ratio: 390 / 844;
+      max-height: calc(100vh - 118px);
+      padding: 8px;
+      border: 1px solid #4b514e;
+      border-radius: 53px;
+      background: #171a19;
+      box-shadow: 0 35px 75px rgba(37, 48, 41, .2), 0 7px 16px rgba(37, 48, 41, .12), inset 0 0 0 2px #303533;
+    }
+    .phone::before, .phone::after { content: ""; position: absolute; left: -3px; width: 3px; border-radius: 3px 0 0 3px; background: #555b58; }
+    .phone::before { top: 142px; height: 37px; }
+    .phone::after { top: 195px; height: 59px; }
+    .screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 45px;
+      background: #f8f8f5;
+      isolation: isolate;
+    }
+    .island { position: absolute; z-index: 20; top: 12px; left: 50%; width: 112px; height: 31px; transform: translateX(-50%); border-radius: 20px; background: #090a0a; }
+    .status {
+      position: absolute;
+      z-index: 15;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 54px;
+      padding: 14px 27px 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+      pointer-events: none;
+    }
+    .status-right { display: flex; align-items: center; gap: 5px; }
+    .signal { display: flex; height: 11px; align-items: end; gap: 1.5px; }
+    .signal i { display: block; width: 3px; border-radius: 2px; background: currentColor; }
+    .signal i:nth-child(1) { height: 4px; }.signal i:nth-child(2) { height: 6px; }.signal i:nth-child(3) { height: 8px; }.signal i:nth-child(4) { height: 10px; }
+    .wifi { font-size: 12px; line-height: 10px; }
+    .battery { position: relative; width: 18px; height: 9px; border: 1px solid currentColor; border-radius: 3px; }
+    .battery::before { content: ""; position: absolute; inset: 1.5px 3px 1.5px 1.5px; border-radius: 1px; background: currentColor; }
+    .battery::after { content: ""; position: absolute; right: -3px; top: 2px; width: 2px; height: 3px; border-radius: 0 2px 2px 0; background: currentColor; }
+
+    .view { position: absolute; inset: 0; display: none; animation: appear .28s ease both; }
+    .view.active { display: block; }
+    @keyframes appear { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    .lock-view {
+      color: white;
+      background: #263c43 url("assets/lockscreen-pair.jpg") center / cover, #263c43 url("https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1000&q=85") center / cover;
+    }
+    .lock-view::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,25,30,.28), rgba(15,35,38,.05) 37%, rgba(12,26,28,.44)); }
+    .lock-view .status { color: white; }
+    .lock-date { position: absolute; top: 119px; width: 100%; text-align: center; font-size: 14px; font-weight: 500; text-shadow: 0 1px 14px rgba(0,0,0,.2); }
+    .lock-time { position: absolute; top: 137px; width: 100%; text-align: center; font-size: 82px; line-height: 1.1; font-weight: 400; letter-spacing: -.07em; text-shadow: 0 2px 20px rgba(0,0,0,.15); }
+    .weather { position: absolute; top: 236px; left: 0; width: 100%; text-align: center; font-size: 12px; font-weight: 500; text-shadow: 0 1px 8px rgba(0,0,0,.3); }
+    .notifications { position: absolute; top: 388px; left: 17px; right: 17px; display: grid; gap: 8px; }
+    .notice { width: 100%; padding: 12px 14px; border: 1px solid rgba(255,255,255,.23); border-radius: 16px; background: rgba(245,248,247,.76); color: #25302c; text-align: left; backdrop-filter: blur(20px); }
+    button.notice { cursor: pointer; }
+    .notice > .notice-title, .notice > .notice-body { display: block; }
+    .notice-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+    .notice-app { font-size: 9px; font-weight: 700; letter-spacing: .08em; color: #596c60; }
+    .notice-time { font-size: 9px; color: #6d7871; }
+    .notice-title { font-size: 12px; font-weight: 700; }
+    .notice-body { margin-top: 2px; color: #59645d; font-size: 10px; }
+    .lock-actions { position: absolute; bottom: 43px; left: 27px; right: 27px; display: flex; align-items: center; justify-content: space-between; }
+    .round-action { width: 43px; height: 43px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.24); border-radius: 50%; background: rgba(20,33,35,.3); color: white; backdrop-filter: blur(8px); font-size: 16px; }
+    .unlock { border: 0; color: white; background: transparent; font-size: 10px; font-weight: 600; letter-spacing: .04em; cursor: pointer; }
+    .passcode-overlay[hidden] { display: none; }
+    .passcode-overlay { position: absolute; z-index: 25; inset: 52px 0 0; padding: 8px 24px 28px; display: flex; flex-direction: column; align-items: center; background: rgba(248,249,246,.98); color: #27322b; }
+    .passcode-cancel { position: absolute; top: 8px; left: 18px; border: 0; background: transparent; color: #68746a; font-size: 12px; cursor: pointer; }
+    .passcode-title { margin: 55px 0 22px; font-size: 16px; font-weight: 600; }
+    .passcode-dots { display: flex; gap: 14px; }
+    .passcode-dot { width: 9px; height: 9px; border: 1px solid #4f5b50; border-radius: 50%; }
+    .passcode-dot.filled { background: #4f5b50; }
+    .passcode-error { height: 17px; margin: 12px 0 5px; color: #b34d45; font-size: 10px; }
+    .passcode-pad { width: 228px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .passcode-key { width: 62px; height: 62px; margin: auto; border: 0; border-radius: 50%; background: #e7ebe5; color: #29342d; font-size: 22px; cursor: pointer; }
+    .passcode-key:active { background: #d3dbd1; }
+    .passcode-action { border: 0; background: transparent; color: #59665c; font-size: 11px; cursor: pointer; }
+    .home-indicator { position: absolute; z-index: 18; bottom: 8px; left: 50%; width: 108px; height: 4px; transform: translateX(-50%); border-radius: 9px; background: rgba(0,0,0,.8); }
+    .lock-view .home-indicator { background: white; }
+
+    .home-view {
+      color: white;
+      background: #648279 url("https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1000&q=85") center / cover;
+    }
+    .home-view::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(24,44,40,.12), rgba(24,44,40,.28)); }
+    .home-view .status { color: white; }
+    .home-date { position: absolute; top: 77px; left: 26px; font-size: 12px; font-weight: 600; text-shadow: 0 1px 8px rgba(0,0,0,.25); }
+    .home-clock { position: absolute; top: 95px; left: 25px; font-size: 46px; font-weight: 500; letter-spacing: -.06em; text-shadow: 0 1px 8px rgba(0,0,0,.2); }
+    .app-grid { position: absolute; top: 192px; left: 24px; right: 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 23px 10px; }
+    .app-launch { display: grid; justify-items: center; gap: 5px; padding: 0; border: 0; background: transparent; color: white; cursor: pointer; }
+    .app-icon { position: relative; width: 55px; height: 55px; display: grid; place-items: center; border-radius: 16px; box-shadow: 0 5px 12px rgba(0,0,0,.14); font-size: 22px; font-weight: 600; }
+    .app-icon.calendar { background: #fff; color: #dd514b; font-size: 10px; font-weight: 700; }
+    .app-icon.photos { background: #f9f8f3; color: #df8966; }
+    .app-icon.camera { background: #343a3b; color: #f7f4eb; }
+    .app-icon.notes { background: #fff9d8; color: #9d8650; }
+    .app-icon.maps { background: #d9e8d8; color: #54856a; }
+    .app-icon.weather-app { background: #79bad7; color: #fff; }
+    .app-icon.reminder { background: white; color: #65866b; }
+    .app-icon.store { background: #507b8c; color: white; }
+    .app-icon.message-app { background: var(--yellow); color: #372f18; }
+    .app-label { max-width: 62px; overflow: hidden; font-size: 9px; font-weight: 500; text-shadow: 0 1px 5px rgba(0,0,0,.5); white-space: nowrap; text-overflow: ellipsis; }
+    .app-badge { position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; padding: 0 4px; display: grid; place-items: center; border: 1.5px solid white; border-radius: 10px; background: #ed635d; color: white; font-size: 9px; }
+    .page-dots { position: absolute; bottom: 106px; left: 0; right: 0; display: flex; justify-content: center; gap: 5px; }
+    .page-dots i { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.55); }.page-dots i:first-child { background: white; }
+    .dock { position: absolute; bottom: 23px; left: 12px; right: 12px; height: 77px; padding: 10px 14px; display: flex; justify-content: space-around; align-items: center; border: 1px solid rgba(255,255,255,.22); border-radius: 25px; background: rgba(238,244,238,.32); backdrop-filter: blur(22px); }
+    .dock .app-icon { width: 49px; height: 49px; border-radius: 15px; }
+
+    .chat-view { background: #fff; color: #202721; }
+    .chat-view .status { color: #202721; }
+    .chat-header { position: absolute; top: 52px; left: 0; right: 0; height: 58px; padding: 0 21px; display: flex; align-items: center; justify-content: space-between; }
+    .chat-header h2 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -.04em; }
+    .header-tools { display: flex; align-items: center; gap: 17px; color: #343b35; font-size: 18px; }
+    .icon-button { padding: 3px; border: 0; background: none; cursor: pointer; font-size: 20px; line-height: 1; }
+    .chat-search { position: absolute; top: 116px; left: 20px; right: 20px; height: 37px; padding: 0 12px; display: flex; align-items: center; gap: 7px; border-radius: 8px; background: #f2f3f1; color: #8a928b; font-size: 11px; }
+    .chat-search span:first-child { font-size: 15px; }
+    .chat-filters { position: absolute; top: 165px; left: 21px; right: 21px; display: flex; align-items: center; gap: 7px; }
+    .filter-chip { padding: 6px 11px; border: 1px solid #e8ebe6; border-radius: 15px; background: white; color: #69736b; font-size: 10px; cursor: pointer; }
+    .filter-chip.selected { border-color: #313a33; background: #313a33; color: white; }
+    .chat-list { position: absolute; top: 208px; left: 0; right: 0; bottom: 76px; overflow: auto; scrollbar-width: none; }
+    .chat-list::-webkit-scrollbar { display: none; }
+    .chat-row { width: 100%; min-height: 72px; padding: 10px 20px; display: flex; align-items: center; gap: 12px; border: 0; background: white; text-align: left; cursor: pointer; }
+    .chat-row:hover { background: #f8f9f6; }
+    .avatar { position: relative; flex: 0 0 48px; width: 48px; height: 48px; display: grid; place-items: center; overflow: hidden; border-radius: 18px; color: #fff; font-size: 16px; font-weight: 700; }
+    .avatar::after { content: ""; position: absolute; right: -8px; bottom: -12px; width: 35px; height: 35px; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; }
+    .avatar.mint { background: #82a995; }.avatar.coral { background: #d58e79; }.avatar.blue { background: #7999a9; }.avatar.yellow { background: #c4a24e; }.avatar.plum { background: #967f9c; }
+    .chat-copy { min-width: 0; flex: 1; }
+    .chat-row-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    .chat-name { overflow: hidden; font-size: 13px; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; }
+    .chat-time { flex: none; color: #9aa19b; font-size: 9px; }
+    .chat-preview { margin-top: 5px; overflow: hidden; color: #89918a; font-size: 10px; white-space: nowrap; text-overflow: ellipsis; }
+    .unread { min-width: 17px; height: 17px; margin-left: 6px; padding: 0 5px; display: inline-grid; place-items: center; border-radius: 10px; background: #f5df5a; color: #50471b; font-size: 9px; font-weight: 700; }
+    .bottom-nav { position: absolute; bottom: 8px; left: 0; right: 0; height: 67px; padding: 8px 8px 5px; display: flex; justify-content: space-around; border-top: 1px solid #f0f1ee; background: rgba(255,255,255,.96); }
+    .nav-item { width: 25%; display: grid; justify-items: center; align-content: center; gap: 3px; border: 0; background: transparent; color: #929991; font-size: 9px; cursor: pointer; }
+    .nav-item b { font-size: 19px; line-height: 20px; font-weight: 500; }
+    .nav-item.current { color: #333c35; }
+
+    .thread-view { background: #aeb8a9; }
+    .thread-view::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 40%, rgba(245,241,222,.48), transparent 55%), #e9eee5; }
+    .thread-header { position: absolute; z-index: 2; top: 51px; left: 0; right: 0; height: 57px; padding: 0 17px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(48,58,47,.09); background: rgba(248,249,245,.87); backdrop-filter: blur(12px); }
+    .thread-back { border: 0; background: none; font-size: 22px; cursor: pointer; }
+    .thread-heading { min-width: 0; flex: 1; display: grid; gap: 2px; }
+    .thread-person { flex: 1; font-size: 13px; font-weight: 700; }
+    .thread-subtitle { overflow: hidden; color: #788278; font-size: 9px; white-space: nowrap; text-overflow: ellipsis; }
+    .thread-tools { display: flex; gap: 15px; font-size: 17px; }
+    .thread-messages { position: absolute; top: 109px; left: 0; right: 0; bottom: 67px; padding: 17px 15px 22px; overflow: auto; display: flex; flex-direction: column; gap: 10px; }
+    .empty-chat { margin: auto; padding: 10px 0; color: #818981; font-size: 11px; text-align: center; }
+    .date-pill { align-self: center; margin: 3px 0 8px; padding: 5px 10px; border-radius: 13px; background: rgba(77,88,72,.25); color: #fff; font-size: 9px; }
+    .bubble-row { display: flex; align-items: end; gap: 6px; }
+    .bubble-row.mine { justify-content: flex-end; }
+    .bubble { max-width: 75%; padding: 10px 12px; border-radius: 4px 15px 15px 15px; background: #fff; color: #303832; font-size: 11px; line-height: 1.55; box-shadow: 0 2px 4px rgba(46,58,45,.04); }
+    .mine .bubble { border-radius: 15px 4px 15px 15px; background: #f7e260; }
+    .bubble-time { color: #768075; font-size: 8px; white-space: nowrap; }
+    .group-message { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+    .group-message.mine { align-items: flex-end; }
+    .sender-name { margin-left: 4px; color: #657064; font-size: 9px; }
+    .group-message.mine .sender-name { margin-right: 4px; text-align: right; }
+    .sample-label { align-self: center; margin: 0 0 3px; color: #758072; font-size: 9px; }
+    .typing-note { align-self: flex-start; padding: 8px 11px; border-radius: 4px 13px 13px; background: rgba(255,255,255,.76); color: #7c857c; font-size: 10px; }
+    .composer { position: absolute; z-index: 2; bottom: 8px; left: 0; right: 0; height: 57px; padding: 7px 12px; display: flex; align-items: center; gap: 8px; background: #fafbf8; }
+    .composer-plus { width: 30px; height: 30px; border: 1px solid #aeb6ac; border-radius: 50%; background: transparent; color: #748074; font-size: 18px; line-height: 1; }
+    .composer-input { min-width: 0; flex: 1; height: 37px; padding: 0 14px; border: 1px solid #e5e9e2; border-radius: 20px; outline: none; background: white; font-size: 11px; }
+    .composer-input:focus { border-color: #a5b6a4; }
+    .send-button { width: 34px; height: 34px; border: 0; border-radius: 50%; background: #f4dc51; color: #36321f; font-size: 15px; cursor: pointer; }
+    .send-button:disabled { opacity: .48; cursor: default; }
+
+    .side-note { align-self: center; padding-left: 18px; border-left: 1px solid #cbd4c8; }
+    .side-note .eyebrow { margin-bottom: 9px; }
+    .side-title { margin: 0 0 8px; font-size: 14px; font-weight: 600; }
+    .side-detail { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.8; }
+    .side-index { margin-top: 23px; color: #8a958c; font-size: 10px; letter-spacing: .1em; }
+
+    @media (max-width: 860px) {
+      .stage { width: min(100% - 32px, 560px); grid-template-columns: 1fr; gap: 17px; padding: 17px 0 28px; }
+      .screen-picker { order: 0; }
+      .screen-picker h1, .screen-picker .eyebrow { display: none; }
+      .screen-tabs { display: flex; gap: 7px; }
+      .screen-tab { flex: 1; justify-content: center; gap: 7px; padding: 10px 8px; }
+      .screen-tab:hover { transform: translateY(-2px); }
+      .tab-number { display: none; }.tab-label { flex: none; font-size: 11px; }.tab-arrow { display: none; }
+      .device-column { order: 1; }
+      .side-note { display: none; }
+      .phone { width: min(390px, calc((100dvh - 168px) * .462)); max-height: calc(100dvh - 168px); }
+    }
+    @media (max-width: 430px) {
+      .topbar { height: 58px; padding: 0 18px; }
+      .top-meta { gap: 9px; font-size: 9px; }
+      .stage { width: 100%; min-height: calc(100dvh - 58px); margin: 0; padding: 12px 10px 17px; grid-template-rows: auto 1fr; gap: 10px; }
+      .phone { width: min(390px, calc((100dvh - 132px) * .462)); max-height: calc(100dvh - 132px); padding: 6px; border-radius: 49px; }
+      .screen { border-radius: 42px; }
+      .island { top: 10px; }
+      .lock-time { font-size: 75px; }
+      .notifications { top: 45%; }
+    }
+    @media (max-height: 720px) and (min-width: 861px) {
+      .stage { padding-top: 18px; padding-bottom: 18px; }
+      .phone { max-height: calc(100vh - 92px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="workspace">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">m</span><span>MORI / DEVICE STUDIO</span></div>
+      <div class="top-meta"><span class="live-dot"></span><span>RIU'S IPHONE</span><span>·</span><span>390 × 844</span></div>
+    </header>
+
+    <main class="stage">
+      <section class="screen-picker" aria-label="화면 선택">
+        <p class="eyebrow">PERSONAL DEVICE / 01</p>
+        <h1>오늘의 화면</h1>
+        <div class="screen-tabs" role="tablist" aria-label="아이폰 화면">
+          <button class="screen-tab" role="tab" aria-selected="true" data-screen="lock"><span class="tab-number">01</span><span class="tab-label">잠금 화면</span><span class="tab-arrow">↗</span></button>
+          <button class="screen-tab" role="tab" aria-selected="false" data-screen="home"><span class="tab-number">02</span><span class="tab-label">홈 화면</span><span class="tab-arrow">↗</span></button>
+          <button class="screen-tab" role="tab" aria-selected="false" data-screen="chat"><span class="tab-number">03</span><span class="tab-label">메신저</span><span class="tab-arrow">↗</span></button>
+        </div>
+      </section>
+
+      <section class="device-column" aria-label="아이폰 화면 미리보기">
+        <div class="phone">
+          <div class="screen">
+            <div class="island" aria-hidden="true"></div>
+            <div class="status"><span>2:10</span><span class="status-right"><span class="signal"><i></i><i></i><i></i><i></i></span><span class="wifi">⌁</span><span class="battery"></span></span></div>
+
+            <section class="view lock-view active" data-view="lock" aria-label="잠금 화면">
+              <div class="lock-date">10월 31일 토요일</div>
+              <div class="lock-time">2:10</div>
+              <div class="weather">맑음 &nbsp; 18°</div>
+              <div class="notifications">
+                <button class="notice" type="button" data-open-person="성호" aria-label="성호의 개인 메시지 열기"><span class="notice-heading"><span class="notice-app">MORI MESSAGE · 개인 메시지</span><span class="notice-time">어제</span></span><span class="notice-title">성호</span><span class="notice-body">오늘 좀 피곤하네.</span></button>
+                <article class="notice"><div class="notice-heading"><span class="notice-app">CALENDAR</span><span class="notice-time">1분 전</span></div><div class="notice-title">주말 산책</div><div class="notice-body">오후 2:00 · 서울숲 입구</div></article>
+              </div>
+              <div class="lock-actions"><button class="round-action" aria-label="손전등">◉</button><button class="unlock" data-unlock="home">위로 쓸어올려 열기 ↑</button><button class="round-action" aria-label="카메라">⌕</button></div>
+            </section>
+
+            <section class="view home-view" data-view="home" aria-label="홈 화면">
+              <div class="home-date">10월 31일 토요일</div><div class="home-clock">2:10</div>
+              <div class="app-grid">
+                <button class="app-launch"><span class="app-icon calendar">SAT<br><strong>31</strong></span><span class="app-label">캘린더</span></button>
+                <button class="app-launch"><span class="app-icon photos">✿</span><span class="app-label">사진</span></button>
+                <button class="app-launch"><span class="app-icon camera">◉</span><span class="app-label">카메라</span></button>
+                <button class="app-launch"><span class="app-icon notes">▤</span><span class="app-label">메모</span></button>
+                <button class="app-launch"><span class="app-icon maps">⌖</span><span class="app-label">지도</span></button>
+                <button class="app-launch"><span class="app-icon weather-app">☼</span><span class="app-label">날씨</span></button>
+                <button class="app-launch"><span class="app-icon reminder">✓</span><span class="app-label">미리 알림</span></button>
+                <button class="app-launch"><span class="app-icon store">A</span><span class="app-label">앱 스토어</span></button>
+              </div>
+              <div class="page-dots"><i></i><i></i><i></i></div>
+              <div class="dock">
+                <button class="app-launch"><span class="app-icon" style="background:#83b77f;color:white">⌕</span></button>
+                <button class="app-launch"><span class="app-icon message-app" data-go="chat">M</span></button>
+                <button class="app-launch"><span class="app-icon" style="background:#d8a476;color:white">♫</span></button>
+                <button class="app-launch"><span class="app-icon" style="background:#7ca8bd;color:white">◉</span></button>
+              </div>
+            </section>
+
+            <section class="view chat-view" data-view="chat" aria-label="메신저 대화 목록">
+              <header class="chat-header"><h2>채팅</h2><div class="header-tools"><button class="icon-button" aria-label="새 대화">＋</button><button class="icon-button" aria-label="검색">⌕</button><button class="icon-button" aria-label="더 보기">···</button></div></header>
+              <div class="chat-search"><span>⌕</span><span>메시지, 친구 검색</span></div>
+              <div class="chat-filters"><button class="filter-chip selected">전체</button><button class="filter-chip">안 읽음</button><button class="filter-chip">즐겨찾기</button></div>
+              <div class="chat-list">
+                <button class="chat-row" data-person="성호"><span class="avatar coral">성</span><span class="chat-copy"><span class="chat-row-top"><span class="chat-name">성호</span><span class="chat-time">오후 11:48</span></span><span class="chat-preview">리우: 필요한 거 있으면 말해요.</span></span></button>
+                <button class="chat-row" data-person="재현"><span class="avatar blue">재</span><span class="chat-copy"><span class="chat-row-top"><span class="chat-name">재현</span><span class="chat-time">어제</span></span><span class="chat-preview">대화를 시작해 보세요.</span></span></button>
+              </div>
+              <nav class="bottom-nav" aria-label="메신저 메뉴"><button class="nav-item"><b>♙</b>친구</button><button class="nav-item current"><b>▤</b>채팅</button><button class="nav-item"><b>◉</b>발견</button><button class="nav-item"><b>···</b>더보기</button></nav>
+            </section>
+
+            <section class="view thread-view" data-view="thread" aria-label="대화">
+              <header class="thread-header"><button class="thread-back" aria-label="채팅 목록">‹</button><div class="thread-heading"><span class="thread-person">성호</span><span class="thread-subtitle">1:1 메시지</span></div><span class="thread-tools"><span>⌕</span><span>☰</span></span></header>
+              <div class="thread-messages" id="threadMessages"></div>
+              <form class="composer" id="messageForm"><button class="composer-plus" type="button" aria-label="첨부">＋</button><input class="composer-input" id="messageInput" autocomplete="off" placeholder="메시지 입력"><button class="send-button" type="submit" aria-label="보내기">↑</button></form>
+            </section>
+            <div class="passcode-overlay" id="passcodeOverlay" hidden>
+              <button class="passcode-cancel" type="button" data-cancel-passcode>취소</button>
+              <p class="passcode-title">암호 입력</p>
+              <div class="passcode-dots" aria-label="네 자리 암호">
+                <span class="passcode-dot"></span><span class="passcode-dot"></span><span class="passcode-dot"></span><span class="passcode-dot"></span>
+              </div>
+              <p class="passcode-error" id="passcodeError" aria-live="polite"></p>
+              <div class="passcode-pad" aria-label="암호 키패드">
+                <button class="passcode-key" type="button" data-digit="1">1</button><button class="passcode-key" type="button" data-digit="2">2</button><button class="passcode-key" type="button" data-digit="3">3</button>
+                <button class="passcode-key" type="button" data-digit="4">4</button><button class="passcode-key" type="button" data-digit="5">5</button><button class="passcode-key" type="button" data-digit="6">6</button>
+                <button class="passcode-key" type="button" data-digit="7">7</button><button class="passcode-key" type="button" data-digit="8">8</button><button class="passcode-key" type="button" data-digit="9">9</button>
+                <span></span><button class="passcode-key" type="button" data-digit="0">0</button><button class="passcode-action" type="button" data-delete-digit aria-label="마지막 숫자 지우기">지우기</button>
+              </div>
+            </div>
+            <div class="home-indicator" aria-hidden="true"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side-note"><p class="eyebrow">NOW PREVIEWING</p><p class="side-title" id="previewTitle">잠금 화면</p><p class="side-detail" id="previewDetail">토요일, 새벽 2:10<br>지난 알림 · 맑음 18°</p><div class="side-index" id="previewIndex">LOCK SCREEN / 01</div></aside>
+    </main>
+  </div>
+
+  <script>
+    const tabs = [...document.querySelectorAll(".screen-tab")];
+    const views = [...document.querySelectorAll(".view")];
+    const previewTitle = document.querySelector("#previewTitle");
+    const previewDetail = document.querySelector("#previewDetail");
+    const previewIndex = document.querySelector("#previewIndex");
+    const screenInfo = {
+      lock: ["잠금 화면", "토요일, 새벽 2:10<br>지난 알림 · 맑음 18°", "LOCK SCREEN / 01"],
+      home: ["홈 화면", "자주 쓰는 앱 8개<br>개인 대화방 2개", "HOME SCREEN / 02"],
+      chat: ["메신저", "개인 메시지방 2개<br>성호 · 재현", "MESSENGER / 03"]
+    };
+    const conversations = {
+      "성호": [
+        { sender: "성호", text: "오늘 좀 피곤하네.", time: "오후 11:42" },
+        { sender: "리우", text: "형, 오늘 많이 피곤해 보여요. 괜찮아요?", time: "오후 11:43" },
+        { sender: "성호", text: "응, 조금. 걱정해줘서 고마워.", time: "오후 11:44" },
+        { sender: "리우", text: "물은 마셨어요? 자기 전에 한 잔 마셔요.", time: "오후 11:45" },
+        { sender: "리우", text: "내일 일정 있으니까 오늘은 너무 무리하지 말고요.", time: "오후 11:46" },
+        { sender: "성호", text: "알겠어. 너도 늦었으니까 얼른 자.", time: "오후 11:47" },
+        { sender: "리우", text: "네. 형도 푹 자요. 필요한 거 있으면 말해요.", time: "오후 11:48" }
+      ],
+      "재현": []
+    };
+    const passcodeOverlay = document.querySelector("#passcodeOverlay");
+    const passcodeError = document.querySelector("#passcodeError");
+    let currentPerson = "성호";
+    let enteredPasscode = "";
+    let pendingUnlock = { screen: "home" };
+
+    function showScreen(name) {
+      const screen = name === "thread" ? "chat" : name;
+      views.forEach(view => view.classList.toggle("active", view.dataset.view === name));
+      tabs.forEach(tab => tab.setAttribute("aria-selected", String(tab.dataset.screen === screen)));
+      [previewTitle.textContent, previewDetail.innerHTML, previewIndex.textContent] = screenInfo[screen];
+    }
+
+    tabs.forEach(tab => tab.addEventListener("click", () => {
+      const screen = tab.dataset.screen;
+      const currentScreen = document.querySelector(".view.active").dataset.view;
+      if (screen === "lock" || currentScreen !== "lock") showScreen(screen);
+      else requestUnlock(screen);
+    }));
+    document.querySelectorAll("[data-go]").forEach(button => button.addEventListener("click", () => showScreen(button.dataset.go)));
+    function renderPrivateMessage(sender, text, time = "지금") {
+      const mine = sender === "리우";
+      const messageRow = document.createElement("div");
+      messageRow.className = `bubble-row${mine ? " mine" : ""}`;
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+      const timeLabel = document.createElement("span");
+      timeLabel.className = "bubble-time";
+      timeLabel.textContent = time;
+      if (mine) messageRow.append(timeLabel, bubble);
+      else messageRow.append(bubble, timeLabel);
+      const messages = document.querySelector("#threadMessages");
+      messages.append(messageRow);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function openConversation(person) {
+      currentPerson = person;
+      document.querySelector(".thread-person").textContent = person;
+      const messages = document.querySelector("#threadMessages");
+      messages.replaceChildren();
+      const sampleLabel = document.createElement("div");
+      sampleLabel.className = "sample-label";
+      sampleLabel.textContent = "팬메이드 가상 대화 · 지난 기록 · 1:1";
+      const date = document.createElement("div");
+      date.className = "date-pill";
+      date.textContent = "2026년 10월 30일 금요일";
+      messages.append(sampleLabel, date);
+      if (!conversations[person].length) {
+        const emptyState = document.createElement("div");
+        emptyState.className = "empty-chat";
+        emptyState.textContent = "메시지를 입력해 대화를 시작해 보세요.";
+        messages.append(emptyState);
+      } else {
+        conversations[person].forEach(({ sender, text, time }) => renderPrivateMessage(sender, text, time));
+      }
+      showScreen("thread");
+    }
+
+    function requestUnlock(screen, person) {
+      pendingUnlock = { screen, person };
+      enteredPasscode = "";
+      passcodeError.textContent = "";
+      updatePasscodeDots();
+      passcodeOverlay.hidden = false;
+    }
+
+    function updatePasscodeDots() {
+      document.querySelectorAll(".passcode-dot").forEach((dot, index) => {
+        dot.classList.toggle("filled", index < enteredPasscode.length);
+      });
+    }
+
+    function enterPasscodeDigit(digit) {
+      if (enteredPasscode.length >= 4) return;
+      enteredPasscode += digit;
+      passcodeError.textContent = "";
+      updatePasscodeDots();
+      if (enteredPasscode.length !== 4) return;
+      if (enteredPasscode === "0904") {
+        passcodeOverlay.hidden = true;
+        if (pendingUnlock.person) openConversation(pendingUnlock.person);
+        else showScreen(pendingUnlock.screen);
+        enteredPasscode = "";
+        return;
+      }
+      passcodeError.textContent = "암호가 올바르지 않습니다.";
+      enteredPasscode = "";
+      updatePasscodeDots();
+    }
+
+    document.querySelector("[data-unlock]").addEventListener("click", () => requestUnlock("home"));
+    document.querySelector("[data-open-person]").addEventListener("click", event => requestUnlock("thread", event.currentTarget.dataset.openPerson));
+    document.querySelector("[data-cancel-passcode]").addEventListener("click", () => {
+      passcodeOverlay.hidden = true;
+      enteredPasscode = "";
+      updatePasscodeDots();
+    });
+    document.querySelector("[data-delete-digit]").addEventListener("click", () => {
+      enteredPasscode = enteredPasscode.slice(0, -1);
+      passcodeError.textContent = "";
+      updatePasscodeDots();
+    });
+    document.querySelectorAll("[data-digit]").forEach(button => button.addEventListener("click", () => enterPasscodeDigit(button.dataset.digit)));
+    document.addEventListener("keydown", event => {
+      if (passcodeOverlay.hidden) return;
+      if (/^[0-9]$/.test(event.key)) enterPasscodeDigit(event.key);
+      else if (event.key === "Backspace") document.querySelector("[data-delete-digit]").click();
+      else if (event.key === "Escape") document.querySelector("[data-cancel-passcode]").click();
+    });
+    document.querySelectorAll(".chat-row").forEach(row => row.addEventListener("click", () => openConversation(row.dataset.person)));
+    document.querySelector(".thread-back").addEventListener("click", () => showScreen("chat"));
+    document.querySelectorAll(".filter-chip").forEach(chip => chip.addEventListener("click", () => {
+      document.querySelectorAll(".filter-chip").forEach(item => item.classList.toggle("selected", item === chip));
+    }));
+    document.querySelector("#messageForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const input = document.querySelector("#messageInput");
+      const message = input.value.trim();
+      if (!message) return;
+      if (!conversations[currentPerson].length) document.querySelector("#threadMessages").replaceChildren();
+      conversations[currentPerson].push({ sender: "리우", text: message, time: "지금" });
+      renderPrivateMessage("리우", message, "지금");
+      input.value = "";
+    });
+  </script>
+</body>
+</html>
