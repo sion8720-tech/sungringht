@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#eef1e8">
-  <title>Mori · iPhone 미리보기</title>
+  <title>리우의 iPhone</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -33,57 +33,14 @@
 
     button, input { font: inherit; }
     button { color: inherit; }
-    .workspace { min-height: 100vh; display: flex; flex-direction: column; }
-    .topbar {
-      height: 72px;
-      padding: 0 clamp(20px, 5vw, 72px);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(29, 41, 37, .1);
-    }
-    .brand { display: flex; align-items: center; gap: 11px; font-size: 15px; font-weight: 700; letter-spacing: .02em; }
-    .brand-mark { width: 25px; height: 25px; display: grid; place-items: center; border-radius: 8px; background: var(--green); color: white; font-size: 14px; }
-    .top-meta { display: flex; align-items: center; gap: 18px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .11em; }
-    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #68a47b; box-shadow: 0 0 0 3px rgba(104,164,123,.15); }
-
-    .stage {
-      width: min(1120px, calc(100% - 48px));
-      margin: auto;
-      padding: 35px 0 42px;
-      display: grid;
-      grid-template-columns: minmax(210px, 1fr) 400px minmax(210px, 1fr);
-      align-items: center;
-      gap: clamp(24px, 5vw, 70px);
-    }
-    .screen-picker { align-self: center; }
-    .eyebrow { margin: 0 0 12px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .16em; }
-    h1 { margin: 0 0 28px; font-size: 28px; line-height: 1.25; letter-spacing: -.04em; font-weight: 600; }
-    .screen-tabs { display: grid; gap: 8px; }
-    .screen-tab {
-      border: 1px solid transparent;
-      border-radius: 12px;
-      padding: 14px 15px;
-      display: flex;
-      align-items: center;
-      gap: 13px;
-      text-align: left;
-      background: transparent;
-      cursor: pointer;
-      transition: background .2s, border-color .2s, transform .2s;
-    }
-    .screen-tab:hover { transform: translateX(3px); background: rgba(255,255,255,.55); }
-    .screen-tab[aria-selected="true"] { background: var(--paper); border-color: var(--line); box-shadow: 0 5px 16px rgba(49, 65, 53, .05); }
-    .tab-number { color: #89938b; font-size: 10px; font-weight: 700; letter-spacing: .08em; }
-    .tab-label { flex: 1; font-size: 13px; font-weight: 600; }
-    .tab-arrow { color: #9aa39b; font-size: 16px; }
-
+    .workspace { min-height: 100dvh; }
+    .stage { min-height: 100dvh; padding: 12px; display: flex; align-items: center; justify-content: center; }
     .device-column { display: flex; justify-content: center; }
     .phone {
       position: relative;
-      width: min(100%, 390px);
+      width: min(100%, 390px, calc((100dvh - 24px) * .462));
       aspect-ratio: 390 / 844;
-      max-height: calc(100vh - 118px);
+      max-height: calc(100dvh - 24px);
       padding: 8px;
       border: 1px solid #4b514e;
       border-radius: 53px;
@@ -139,19 +96,8 @@
     .lock-view .status { color: white; }
     .lock-date { position: absolute; top: 119px; width: 100%; text-align: center; font-size: 14px; font-weight: 500; text-shadow: 0 1px 14px rgba(0,0,0,.2); }
     .lock-time { position: absolute; top: 137px; width: 100%; text-align: center; font-size: 82px; line-height: 1.1; font-weight: 400; letter-spacing: -.07em; text-shadow: 0 2px 20px rgba(0,0,0,.15); }
-    .weather { position: absolute; top: 236px; left: 0; width: 100%; text-align: center; font-size: 12px; font-weight: 500; text-shadow: 0 1px 8px rgba(0,0,0,.3); }
-    .notifications { position: absolute; top: 388px; left: 17px; right: 17px; display: grid; gap: 8px; }
-    .notice { width: 100%; padding: 12px 14px; border: 1px solid rgba(255,255,255,.23); border-radius: 16px; background: rgba(245,248,247,.76); color: #25302c; text-align: left; backdrop-filter: blur(20px); }
-    button.notice { cursor: pointer; }
-    .notice > .notice-title, .notice > .notice-body { display: block; }
-    .notice-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-    .notice-app { font-size: 9px; font-weight: 700; letter-spacing: .08em; color: #596c60; }
-    .notice-time { font-size: 9px; color: #6d7871; }
-    .notice-title { font-size: 12px; font-weight: 700; }
-    .notice-body { margin-top: 2px; color: #59645d; font-size: 10px; }
-    .lock-actions { position: absolute; bottom: 43px; left: 27px; right: 27px; display: flex; align-items: center; justify-content: space-between; }
-    .round-action { width: 43px; height: 43px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.24); border-radius: 50%; background: rgba(20,33,35,.3); color: white; backdrop-filter: blur(8px); font-size: 16px; }
-    .unlock { border: 0; color: white; background: transparent; font-size: 10px; font-weight: 600; letter-spacing: .04em; cursor: pointer; }
+    .lock-view { cursor: pointer; }
+    .lock-hint { position: absolute; bottom: 48px; left: 0; right: 0; color: rgba(255,255,255,.88); font-size: 11px; text-align: center; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
     .passcode-overlay[hidden] { display: none; }
     .passcode-overlay { position: absolute; z-index: 25; inset: 52px 0 0; padding: 8px 24px 28px; display: flex; flex-direction: column; align-items: center; background: rgba(248,249,246,.98); color: #27322b; }
     .passcode-cancel { position: absolute; top: 8px; left: 18px; border: 0; background: transparent; color: #68746a; font-size: 12px; cursor: pointer; }
@@ -252,73 +198,28 @@
     .send-button { width: 34px; height: 34px; border: 0; border-radius: 50%; background: #f4dc51; color: #36321f; font-size: 15px; cursor: pointer; }
     .send-button:disabled { opacity: .48; cursor: default; }
 
-    .side-note { align-self: center; padding-left: 18px; border-left: 1px solid #cbd4c8; }
-    .side-note .eyebrow { margin-bottom: 9px; }
-    .side-title { margin: 0 0 8px; font-size: 14px; font-weight: 600; }
-    .side-detail { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.8; }
-    .side-index { margin-top: 23px; color: #8a958c; font-size: 10px; letter-spacing: .1em; }
-
-    @media (max-width: 860px) {
-      .stage { width: min(100% - 32px, 560px); grid-template-columns: 1fr; gap: 17px; padding: 17px 0 28px; }
-      .screen-picker { order: 0; }
-      .screen-picker h1, .screen-picker .eyebrow { display: none; }
-      .screen-tabs { display: flex; gap: 7px; }
-      .screen-tab { flex: 1; justify-content: center; gap: 7px; padding: 10px 8px; }
-      .screen-tab:hover { transform: translateY(-2px); }
-      .tab-number { display: none; }.tab-label { flex: none; font-size: 11px; }.tab-arrow { display: none; }
-      .device-column { order: 1; }
-      .side-note { display: none; }
-      .phone { width: min(390px, calc((100dvh - 168px) * .462)); max-height: calc(100dvh - 168px); }
-    }
     @media (max-width: 430px) {
-      .topbar { height: 58px; padding: 0 18px; }
-      .top-meta { gap: 9px; font-size: 9px; }
-      .stage { width: 100%; min-height: calc(100dvh - 58px); margin: 0; padding: 12px 10px 17px; grid-template-rows: auto 1fr; gap: 10px; }
-      .phone { width: min(390px, calc((100dvh - 132px) * .462)); max-height: calc(100dvh - 132px); padding: 6px; border-radius: 49px; }
+      .stage { padding: 8px; }
+      .phone { width: min(390px, calc((100dvh - 16px) * .462), calc(100vw - 16px)); max-height: calc(100dvh - 16px); padding: 6px; border-radius: 49px; }
       .screen { border-radius: 42px; }
       .island { top: 10px; }
       .lock-time { font-size: 75px; }
-      .notifications { top: 45%; }
-    }
-    @media (max-height: 720px) and (min-width: 861px) {
-      .stage { padding-top: 18px; padding-bottom: 18px; }
-      .phone { max-height: calc(100vh - 92px); }
     }
   </style>
 </head>
 <body>
   <div class="workspace">
-    <header class="topbar">
-      <div class="brand"><span class="brand-mark">m</span><span>MORI / DEVICE STUDIO</span></div>
-      <div class="top-meta"><span class="live-dot"></span><span>RIU'S IPHONE</span><span>·</span><span>390 × 844</span></div>
-    </header>
-
     <main class="stage">
-      <section class="screen-picker" aria-label="화면 선택">
-        <p class="eyebrow">PERSONAL DEVICE / 01</p>
-        <h1>오늘의 화면</h1>
-        <div class="screen-tabs" role="tablist" aria-label="아이폰 화면">
-          <button class="screen-tab" role="tab" aria-selected="true" data-screen="lock"><span class="tab-number">01</span><span class="tab-label">잠금 화면</span><span class="tab-arrow">↗</span></button>
-          <button class="screen-tab" role="tab" aria-selected="false" data-screen="home"><span class="tab-number">02</span><span class="tab-label">홈 화면</span><span class="tab-arrow">↗</span></button>
-          <button class="screen-tab" role="tab" aria-selected="false" data-screen="chat"><span class="tab-number">03</span><span class="tab-label">메신저</span><span class="tab-arrow">↗</span></button>
-        </div>
-      </section>
-
       <section class="device-column" aria-label="아이폰 화면 미리보기">
         <div class="phone">
           <div class="screen">
             <div class="island" aria-hidden="true"></div>
             <div class="status"><span>2:10</span><span class="status-right"><span class="signal"><i></i><i></i><i></i><i></i></span><span class="wifi">⌁</span><span class="battery"></span></span></div>
 
-            <section class="view lock-view active" data-view="lock" aria-label="잠금 화면">
+            <section class="view lock-view active" data-view="lock" aria-label="잠금 화면, 터치하여 잠금 해제" role="button" tabindex="0">
               <div class="lock-date">10월 31일 토요일</div>
               <div class="lock-time">2:10</div>
-              <div class="weather">맑음 &nbsp; 18°</div>
-              <div class="notifications">
-                <button class="notice" type="button" data-open-person="성호" aria-label="성호의 개인 메시지 열기"><span class="notice-heading"><span class="notice-app">MORI MESSAGE · 개인 메시지</span><span class="notice-time">어제</span></span><span class="notice-title">성호</span><span class="notice-body">오늘 좀 피곤하네.</span></button>
-                <article class="notice"><div class="notice-heading"><span class="notice-app">CALENDAR</span><span class="notice-time">1분 전</span></div><div class="notice-title">주말 산책</div><div class="notice-body">오후 2:00 · 서울숲 입구</div></article>
-              </div>
-              <div class="lock-actions"><button class="round-action" aria-label="손전등">◉</button><button class="unlock" data-unlock="home">위로 쓸어올려 열기 ↑</button><button class="round-action" aria-label="카메라">⌕</button></div>
+              <div class="lock-hint">화면을 터치하여 열기</div>
             </section>
 
             <section class="view home-view" data-view="home" aria-label="홈 화면">
@@ -348,6 +249,8 @@
               <div class="chat-filters"><button class="filter-chip selected">전체</button><button class="filter-chip">안 읽음</button><button class="filter-chip">즐겨찾기</button></div>
               <div class="chat-list">
                 <button class="chat-row" data-person="성호"><span class="avatar coral">성</span><span class="chat-copy"><span class="chat-row-top"><span class="chat-name">성호</span><span class="chat-time">오후 11:48</span></span><span class="chat-preview">리우: 필요한 거 있으면 말해요.</span></span></button>
+                <button class="chat-row" data-person="리우와 성호"><span class="avatar mint">우리</span><span class="chat-copy"><span class="chat-row-top"><span class="chat-name">리우 · 성호</span><span class="chat-time">오후 10:16</span></span><span class="chat-preview">성호: 내일 같이 산책 갈래?</span></span></button>
+                <button class="chat-row" data-person="리우·이한·태산·운학"><span class="avatar plum">단체</span><span class="chat-copy"><span class="chat-row-top"><span class="chat-name">리우, 이한, 태산, 운학</span><span class="chat-time">지금</span></span><span class="chat-preview">단체 대화에 들어가 보세요.</span></span></button>
                 <button class="chat-row" data-person="재현"><span class="avatar blue">재</span><span class="chat-copy"><span class="chat-row-top"><span class="chat-name">재현</span><span class="chat-time">어제</span></span><span class="chat-preview">대화를 시작해 보세요.</span></span></button>
               </div>
               <nav class="bottom-nav" aria-label="메신저 메뉴"><button class="nav-item"><b>♙</b>친구</button><button class="nav-item current"><b>▤</b>채팅</button><button class="nav-item"><b>◉</b>발견</button><button class="nav-item"><b>···</b>더보기</button></nav>
@@ -377,52 +280,53 @@
         </div>
       </section>
 
-      <aside class="side-note"><p class="eyebrow">NOW PREVIEWING</p><p class="side-title" id="previewTitle">잠금 화면</p><p class="side-detail" id="previewDetail">토요일, 새벽 2:10<br>지난 알림 · 맑음 18°</p><div class="side-index" id="previewIndex">LOCK SCREEN / 01</div></aside>
     </main>
   </div>
 
   <script>
-    const tabs = [...document.querySelectorAll(".screen-tab")];
     const views = [...document.querySelectorAll(".view")];
-    const previewTitle = document.querySelector("#previewTitle");
-    const previewDetail = document.querySelector("#previewDetail");
-    const previewIndex = document.querySelector("#previewIndex");
-    const screenInfo = {
-      lock: ["잠금 화면", "토요일, 새벽 2:10<br>지난 알림 · 맑음 18°", "LOCK SCREEN / 01"],
-      home: ["홈 화면", "자주 쓰는 앱 8개<br>개인 대화방 2개", "HOME SCREEN / 02"],
-      chat: ["메신저", "개인 메시지방 2개<br>성호 · 재현", "MESSENGER / 03"]
-    };
     const conversations = {
       "성호": [
         { sender: "성호", text: "오늘 좀 피곤하네.", time: "오후 11:42" },
-        { sender: "리우", text: "형, 오늘 많이 피곤해 보여요. 괜찮아요?", time: "오후 11:43" },
+        { sender: "리우", text: "너 오늘 많이 피곤해 보인다. 괜찮아?", time: "오후 11:43" },
         { sender: "성호", text: "응, 조금. 걱정해줘서 고마워.", time: "오후 11:44" },
-        { sender: "리우", text: "물은 마셨어요? 자기 전에 한 잔 마셔요.", time: "오후 11:45" },
-        { sender: "리우", text: "내일 일정 있으니까 오늘은 너무 무리하지 말고요.", time: "오후 11:46" },
+        { sender: "리우", text: "물은 마셨어? 자기 전에 한 잔 마셔.", time: "오후 11:45" },
+        { sender: "리우", text: "내일 일정 있으니까 오늘은 너무 무리하지 말고.", time: "오후 11:46" },
         { sender: "성호", text: "알겠어. 너도 늦었으니까 얼른 자.", time: "오후 11:47" },
-        { sender: "리우", text: "네. 형도 푹 자요. 필요한 거 있으면 말해요.", time: "오후 11:48" }
+        { sender: "리우", text: "엉야. 너도 푹 자. 필요한 거 있으면 말해.", time: "오후 11:48" }
       ],
-      "재현": []
+      "재현": [],
+      "리우와 성호": [
+        { sender: "성호", text: "내일 같이 산책 갈래?", time: "오후 10:14" },
+        { sender: "리우", text: "좋아! 몇 시에 만날까?", time: "오후 10:15" },
+        { sender: "성호", text: "점심 먹고 서울숲 입구에서 보자.", time: "오후 10:16" }
+      ],
+      "리우·이한·태산·운학": []
     };
+    const groupConversations = new Set(["리우와 성호", "리우·이한·태산·운학"]);
+    const liveGroupMessages = [
+     {  sender: "운학", text: "다들 소리 들려요?;;" },
+     { sender: "리우", text: "ㅇㅇ.. 다들 노캔껴라." },
+      { sender: "이한", text: "소리 너무하다ㅎㅎ//" },
+      { sender: "태산", text: "단체로 방문 열고 나가볼까?ㅋㅋ" },
+      { sender: "운학", text: "미쳤네;;" },
+      { sender: "리우", text: "다 조용히 하고 자라..." },
+      { sender: "이한", text: "성호형 내건데~" },
+      { sender: "태산", text: "지랄" },
+      { sender: "운학", text: "뭐라는거야 이한이형;;" },
+      { sender: "리우", text: "쉿. 자라." }
+    ];
     const passcodeOverlay = document.querySelector("#passcodeOverlay");
     const passcodeError = document.querySelector("#passcodeError");
     let currentPerson = "성호";
     let enteredPasscode = "";
     let pendingUnlock = { screen: "home" };
+    let liveGroupMessageIndex = 0;
+    let liveGroupMessageTimer;
 
     function showScreen(name) {
-      const screen = name === "thread" ? "chat" : name;
       views.forEach(view => view.classList.toggle("active", view.dataset.view === name));
-      tabs.forEach(tab => tab.setAttribute("aria-selected", String(tab.dataset.screen === screen)));
-      [previewTitle.textContent, previewDetail.innerHTML, previewIndex.textContent] = screenInfo[screen];
     }
-
-    tabs.forEach(tab => tab.addEventListener("click", () => {
-      const screen = tab.dataset.screen;
-      const currentScreen = document.querySelector(".view.active").dataset.view;
-      if (screen === "lock" || currentScreen !== "lock") showScreen(screen);
-      else requestUnlock(screen);
-    }));
     document.querySelectorAll("[data-go]").forEach(button => button.addEventListener("click", () => showScreen(button.dataset.go)));
     function renderPrivateMessage(sender, text, time = "지금") {
       const mine = sender === "리우";
@@ -441,14 +345,59 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
+    function renderGroupMessage(sender, text, time = "지금") {
+      const mine = sender === "리우";
+      const message = document.createElement("div");
+      message.className = `group-message${mine ? " mine" : ""}`;
+      const senderLabel = document.createElement("span");
+      senderLabel.className = "sender-name";
+      senderLabel.textContent = sender;
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+      const timeLabel = document.createElement("span");
+      timeLabel.className = "bubble-time";
+      timeLabel.textContent = time;
+      message.append(senderLabel, bubble, timeLabel);
+      const messages = document.querySelector("#threadMessages");
+      messages.append(message);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function renderMessage(sender, text, time = "지금") {
+      if (groupConversations.has(currentPerson)) renderGroupMessage(sender, text, time);
+      else renderPrivateMessage(sender, text, time);
+    }
+
+    function stopLiveGroupMessages() {
+      clearTimeout(liveGroupMessageTimer);
+      liveGroupMessageTimer = undefined;
+    }
+
+    function startLiveGroupMessages() {
+      if (liveGroupMessageTimer || liveGroupMessageIndex >= liveGroupMessages.length) return;
+      liveGroupMessageTimer = setTimeout(() => {
+        liveGroupMessageTimer = undefined;
+        const { sender, text } = liveGroupMessages[liveGroupMessageIndex++];
+        conversations["리우·이한·태산·운학"].push({ sender, text, time: "지금" });
+        if (currentPerson === "리우·이한·태산·운학" && document.querySelector('.view.active')?.dataset.view === "thread") {
+          renderGroupMessage(sender, text);
+        }
+        startLiveGroupMessages();
+      }, 1000);
+    }
+
     function openConversation(person) {
+      stopLiveGroupMessages();
       currentPerson = person;
-      document.querySelector(".thread-person").textContent = person;
+      const isGroup = groupConversations.has(person);
+      document.querySelector(".thread-person").textContent = person === "리우·이한·태산·운학" ? "리우, 이한, 태산, 운학" : person === "리우와 성호" ? "리우 · 성호" : person;
+      document.querySelector(".thread-subtitle").textContent = isGroup ? `단체 대화 · ${person === "리우·이한·태산·운학" ? "4명" : "2명"}` : "1:1 메시지";
       const messages = document.querySelector("#threadMessages");
       messages.replaceChildren();
       const sampleLabel = document.createElement("div");
       sampleLabel.className = "sample-label";
-      sampleLabel.textContent = "팬메이드 가상 대화 · 지난 기록 · 1:1";
+      sampleLabel.textContent = isGroup ? "친구들과의 단체 대화" : "친구와의 개인 대화 · 1:1";
       const date = document.createElement("div");
       date.className = "date-pill";
       date.textContent = "2026년 10월 30일 금요일";
@@ -459,9 +408,10 @@
         emptyState.textContent = "메시지를 입력해 대화를 시작해 보세요.";
         messages.append(emptyState);
       } else {
-        conversations[person].forEach(({ sender, text, time }) => renderPrivateMessage(sender, text, time));
+        conversations[person].forEach(({ sender, text, time }) => renderMessage(sender, text, time));
       }
       showScreen("thread");
+      if (person === "리우·이한·태산·운학") startLiveGroupMessages();
     }
 
     function requestUnlock(screen, person) {
@@ -496,8 +446,14 @@
       updatePasscodeDots();
     }
 
-    document.querySelector("[data-unlock]").addEventListener("click", () => requestUnlock("home"));
-    document.querySelector("[data-open-person]").addEventListener("click", event => requestUnlock("thread", event.currentTarget.dataset.openPerson));
+    const lockView = document.querySelector(".lock-view");
+    lockView.addEventListener("click", () => requestUnlock("home"));
+    lockView.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        requestUnlock("home");
+      }
+    });
     document.querySelector("[data-cancel-passcode]").addEventListener("click", () => {
       passcodeOverlay.hidden = true;
       enteredPasscode = "";
@@ -516,7 +472,10 @@
       else if (event.key === "Escape") document.querySelector("[data-cancel-passcode]").click();
     });
     document.querySelectorAll(".chat-row").forEach(row => row.addEventListener("click", () => openConversation(row.dataset.person)));
-    document.querySelector(".thread-back").addEventListener("click", () => showScreen("chat"));
+    document.querySelector(".thread-back").addEventListener("click", () => {
+      stopLiveGroupMessages();
+      showScreen("chat");
+    });
     document.querySelectorAll(".filter-chip").forEach(chip => chip.addEventListener("click", () => {
       document.querySelectorAll(".filter-chip").forEach(item => item.classList.toggle("selected", item === chip));
     }));
@@ -527,7 +486,7 @@
       if (!message) return;
       if (!conversations[currentPerson].length) document.querySelector("#threadMessages").replaceChildren();
       conversations[currentPerson].push({ sender: "리우", text: message, time: "지금" });
-      renderPrivateMessage("리우", message, "지금");
+      renderMessage("리우", message, "지금");
       input.value = "";
     });
   </script>
